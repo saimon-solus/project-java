@@ -1,0 +1,80 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        //list of products
+        List<Product> products = new ArrayList<>();
+        products.add(new Product("Laptop", 1500.99));
+        products.add(new Product("Smartphone", 899.49));
+        products.add(new Product("Tablet", 499.99));
+        products.add(new Product("Headphones", 199.99));
+        products.add(new Product("Smartwatch", 299.99));
+        //printing list of products
+        System.out.println("Available products:");
+        for (int i = 0; i < products.size(); i++) {
+            System.out.println((i + 1) + ". " + products.get(i).getName() + " - $" + products.get(i).getPrice());
+        }
+        //input product to order
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("\nEnter the name of the product you want to order: ");
+        String selectedProductName = scanner.nextLine();
+        //if this product have in list give information in variable
+        Product selectedProduct = null;
+        for (Product product : products) {
+            if (product.getName().equalsIgnoreCase(selectedProductName)) {
+                selectedProduct = product;
+                break;
+            }
+        }
+        //if this product doesn't have in list print
+        if (selectedProduct == null) {
+            System.out.println("Sorry, the product you entered is not available.");
+            return;
+        }
+        //asking for adress
+        System.out.print("Enter the delivery address: ");
+        String deliveryAddress = scanner.nextLine();
+        //give random value into variable
+        Random random = new Random();
+        int deliveryTime = random.nextInt(7) + 1;
+        //printing
+        System.out.println("\nYou have ordered: " + selectedProduct.getName());
+        System.out.println("The product will be delivered to: " + deliveryAddress);
+        System.out.println("The product will arrive in: " + deliveryTime + " days");
+    }
+}
+
+class Product {
+    //fields for storing product name
+    private String name;
+    private double price;
+    //just constructor
+    public Product(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
+    //getter
+    public String getName() {
+        return name;
+    }
+    //setter
+    public void setName(String name) {
+        this.name = name;
+    }
+    //getter
+    public double getPrice() {
+        return price;
+    }
+    //setter
+    public void setPrice(double price) {
+        this.price = price;
+    }
+    // Method for getting the string representation of the Product object
+    @Override
+    public String toString() {
+        return "Product{name='" + name + "', price=" + price + '}';
+    }
+}
