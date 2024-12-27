@@ -1,0 +1,248 @@
+import java.util.*;
+//creating class main
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in); //scanner
+        List<Product> products = initializeProducts(); //list
+        List<Order> orders = new ArrayList<>(); //array
+
+        System.out.println("Welcome to the E-Commerce Platform!");//print
+
+        while (true) {
+            System.out.println("\nMenu:");//print
+            System.out.println("1. View Products");//print
+            System.out.println("2. Search Products");//print
+            System.out.println("3. Place an Order");//print
+            System.out.println("4. View Orders");//print
+            System.out.println("5. Filter Orders by Shopper");//print
+            System.out.println("6. Exit");//print
+            System.out.print("Enter your choice: ");//print
+
+            int choice = scanner.nextInt();//variable choice + next input can take only int
+            scanner.nextLine(); //input
+
+            switch (choice) { //variants what can happend
+                case 1:
+                    displayProducts(products);
+                    break;
+                case 2:
+                    searchProducts(scanner, products);
+                    break;
+                case 3:
+                    placeOrder(scanner, products, orders);
+                    break;
+                case 4:
+                    viewOrders(orders);
+                    break;
+                case 5:
+                    filterOrdersByShopper(scanner, orders);
+                    break;
+                case 6:
+                    System.out.println("Thank you for using the platform. Goodbye!");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    private static List<Product> initializeProducts() { //method initializeProducts
+        List<Product> products = new ArrayList<>();
+        products.add(new Product("Laptop", 1500.99));
+        products.add(new Product("Smartphone", 899.49));
+        products.add(new Product("Tablet", 499.99));
+        products.add(new Product("Headphones", 199.99));
+        products.add(new Product("Smartwatch", 299.99));
+        return products;
+    }
+
+    private static void displayProducts(List<Product> products) { //method displayProducts
+        System.out.println("\nAvailable products:");
+        for (int i = 0; i < products.size(); i++) {
+            System.out.println((i + 1) + ". " + products.get(i).getName() + " - $" + products.get(i).getPrice());
+        }
+    }
+
+    private static void searchProducts(Scanner scanner, List<Product> products) {//method
+        System.out.print("Enter product name to search: ");
+        String query = scanner.nextLine().toLowerCase();
+        System.out.println("\nSearch Results:");
+        for (Product product : products) {
+            if (product.getName().toLowerCase().contains(query)) {
+                System.out.println(product);
+            }
+        }
+    }
+
+    private static void placeOrder(Scanner scanner, List<Product> products, List<Order> orders) {//method
+        displayProducts(products);
+        System.out.print("Enter the number of the product you want to order: ");
+        int productIndex = scanner.nextInt() - 1; //variable + int scanner
+        scanner.nextLine();//input
+
+        if (productIndex < 0 || productIndex >= products.size()) {//condition if productIndex will be incorrect
+            System.out.println("Invalid product selection.");
+            return;
+        }
+
+        System.out.print("Enter the quantity: ");
+        int quantity = scanner.nextInt();
+        scanner.nextLine();//input
+
+        System.out.print("Enter your name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter your email: ");
+        String email = scanner.nextLine();
+        System.out.print("Enter your delivery address: ");
+        String address = scanner.nextLine();
+
+        Product selectedProduct = products.get(productIndex);
+        Shopper shopper = new Shopper(name, email, address);//creating object shopper
+        orders.add(new Order(selectedProduct, shopper, quantity));//adding values into orders
+        System.out.println("Order placed successfully!");
+    }
+
+    private static void viewOrders(List<Order> orders) {//method
+        if (orders.isEmpty()) {
+            System.out.println("No orders found.");
+            return;
+        }
+
+        System.out.println("\nOrder List:");
+        for (Order order : orders) {
+            System.out.println(order);
+        }
+    }
+
+    private static void filterOrdersByShopper(Scanner scanner, List<Order> orders) {//method
+        System.out.print("Enter shopper's email to filter orders: ");
+        String email = scanner.nextLine().toLowerCase();
+        System.out.println("\nOrders for shopper with email: " + email);
+        for (Order order : orders) {
+            if (order.getShopper().getEmail().toLowerCase().equals(email)) {
+                System.out.println(order);
+            }
+        }
+    }
+}
+//creating class product
+class Product {
+    private String name; //encapsulation in one word
+    private double price;
+
+    public Product(String name, double price) {//setter
+        this.name = name;
+        this.price = price;
+    }
+
+    public String getName() {//getter
+        return name;
+    }
+
+    public double getPrice() {//getter
+        return price;
+    }
+
+    @Override
+    public boolean equals(Object obj) {//method
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Product product = (Product) obj;
+        return Double.compare(product.price, price) == 0 && name.equals(product.name);
+    }
+
+    @Override
+    public int hashCode() {//method
+        return Objects.hash(name, price);
+    }
+
+    @Override
+    public String toString() { //method
+        return name + " ($" + price + ")";
+    }
+}
+//creating class shopper
+class Shopper {
+    private String name; //encapsulation again
+    private String email;
+    private String address;
+
+    public Shopper(String name, String email, String address) { //constructor
+        this.name = name;
+        this.email = email;
+        this.address = address;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    @Override
+    public boolean equals(Object obj) { //method
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Shopper shopper = (Shopper) obj;
+        return email.equals(shopper.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(email);
+    }
+
+    @Override
+    public String toString() { //method
+        return "(name='" + name + "', email='" + email + "', address='" + address + "')";
+    }
+}
+//creating class order
+class Order {
+    private Product product;
+    private Shopper shopper;
+    private int quantity;
+
+    public Order(Product product, Shopper shopper, int quantity) {//contructor
+        this.product = product;
+        this.shopper = shopper;
+        this.quantity = quantity;
+    }
+
+    public Shopper getShopper() {
+        return shopper;
+    }
+
+    @Override
+    public boolean equals(Object obj) { //method
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Order order = (Order) obj;
+        return quantity == order.quantity && product.equals(order.product) && shopper.equals(order.shopper);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(product, shopper, quantity);
+    }
+
+    @Override
+    public String toString() {
+        return "Order:(" +
+                "OrderNumber=" + hashCode() + ", " +
+                "Product=" + product + ", " +
+                "Shopper=" + shopper + ", " +
+                "Quantity=" + quantity +
+                ")";
+    }
+}
